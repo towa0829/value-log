@@ -91,20 +91,18 @@ category == “” または null
 | 項目 | 備考 |
 | --- | --- |
 | 日付 |  |
-| カテゴリ | 変更可能にしたい |
+| カテゴリ | 編集可能 |
 | 金額 |  |
-| 満足度 | 変更可能にしたい |
+| 満足度 | 編集可能 |
 | 後悔コスト |  |
-| 削除ボタン |  |
+| 削除ボタン | あり |
 
 ## 集計・分析機能
 
 | 項目 | 備考 |
 | --- | --- |
-| 週ごとの集計・分析 |  |
-| 月ごとの集計・分析 |  |
-| カテゴリ別後悔コスト |  |
-| グラフ表示 |  |
+| 月ごとの集計・分析 | 合計金額 / 後悔コスト / 満足度平均 |
+| グラフ表示 | カテゴリ別（円グラフ / 棒グラフ） |
 
 # 画面設計
 
@@ -117,13 +115,11 @@ category == “” または null
 ```jsx
 	[
 		{
-			"id": "string", //uuid
 			"date": "string", //YYYY-MM-DD
-			"ActualCost": "number", //0以上の整数
+			"amount": "number", //0以上の整数
 			"memo": "string",
-			"category": "string", //既存カテゴリから選択
-			"satisfaction": "number", //0から100
-			"regretCost": "number"
+			"category": "string", //既存カテゴリから選択（空でも可）
+			"satisfaction": "number" //0から100
 		}
 	]
 ```
@@ -150,15 +146,18 @@ category == “” または null
 ├─ graph.html
 │
 ├─ /css
+│   ├─ ress.css
 │   └─ style.css
 │
 ├─ /js
 │   ├─ main.js
 │   ├─ list.js
-│   ├─ storage.js
-│   ├─ calc.js
 │   ├─ chart.js
-│   └─ ai.js
+│   ├─ ai.js
+│   └─ /modules
+│       ├─ config.js
+│       ├─ calc.js
+│       └─ storage.js
 │
 ├─ /assets
 │   └─ images, icons
@@ -173,8 +172,8 @@ category == “” または null
 
 | Phase | 目的 | 技術の主役 |
 | --- | --- | --- |
-| 1 | LocalStorage 家計簿を完成 | HTML / CSS / JS |
-| 2 | 分析・グラフ・編集機能 | JS / Chart.js |
+| 1 | LocalStorage 家計簿（CRUD） | HTML / CSS / JS |
+| 2 | 分析・グラフ | JS / Chart.js |
 | 3 | AIカテゴリ自動分類 | OpenAI API / fetch |
 | 4 | Next.js化＋DB保存 | React / Next / MySQL |
 
@@ -210,7 +209,10 @@ category == “” または null
 index.html 最下部
 
 ```html
-<scriptsrc="js/main.js"></script>
+<script src="js/modules/config.js"></script>
+<script src="js/modules/calc.js"></script>
+<script src="js/modules/storage.js"></script>
+<script src="js/main.js"></script>
 ```
 
 main.js
@@ -220,58 +222,37 @@ main.js
 
 ---
 
-## Step3：後悔コスト計算を分離
+## Step3：共通ロジックを分離
 
 **触る**
 
-- js/calc.js
-- js/main.js
+- js/modules/calc.js
+- js/modules/storage.js
 
 calc.js に計算関数作成
+storage.js に LocalStorage 操作を集約
 
 main.js から呼び出して console.log
 
 ---
 
-## Step4：LocalStorage専門ファイル
+## Step4：保存処理を完成
 
 **触る**
 
-- js/storage.js
+- js/modules/storage.js
 
 作る関数
 
-- saveData(data)
-- getAllData()
-- deleteData(id)
-
-単体で console 確認して動作テスト
-
----
-
-## Step5：保存処理を完成
-
-**触る**
-
-- js/main.js
-- js/storage.js
-- js/calc.js
-
-流れ
-
-1．値取得
-
-2．regretCost計算
-
-3．データオブジェクト作成（uuid含む）
-
-4．saveDataへ渡す
-
-ここで保存完成
+- loadExpenses()
+- saveExpenses(expenses)
+- addExpense(expense)
+- updateExpense(index, expense)
+- deleteExpenseAt(index)
 
 ---
 
-## Step6：一覧画面
+## Step5：一覧画面
 
 **触る**
 
@@ -282,14 +263,18 @@ main.js から呼び出して console.log
 list.html 下部
 
 ```html
-<scriptsrc="js/storage.js"></script><scriptsrc="js/list.js"></script>
+<script src="js/modules/config.js"></script>
+<script src="js/modules/calc.js"></script>
+<script src="js/modules/storage.js"></script>
+<script src="js/list.js"></script>
 ```
 
 list.js
 
-- getAllData()
+- loadExpenses() で取得
 - ループ表示
-- 削除ボタンで deleteData
+- 行クリックで編集
+- 削除ボタンで deleteExpenseAt
 
 **Phase1完成**
 
@@ -297,7 +282,7 @@ list.js
 
 # Phase2：編集・分析・グラフ
 
-## Step7：一覧で編集可能に
+## Step6：一覧で編集可能に
 
 **触る**
 
@@ -305,41 +290,39 @@ list.js
 
 変更点
 
-- satisfaction を range に
-- category を select に
-
-変更時に LocalStorage 更新処理を書く
+- モーダル編集
+- 満足度は range
+- カテゴリは select
+- 更新処理は updateExpense
 
 ---
 
-## Step8：集計ロジック作成
+## Step7：集計ロジック作成
 
 **触る**
 
-- js/chart.js
+- js/graph.js
 
 作る関数
 
-- 週ごとの集計
-- 月ごとの集計
-- カテゴリ別 regretCost 合計
-
-まだグラフ描画しない
-
-consoleで集計確認
+- 月ごとの集計（合計 / 後悔コスト / 満足度平均）
+- カテゴリ別集計（合計 / 割合）
 
 ---
 
-## Step9：graph.html と Chart.js
+## Step8：graph.html と Chart.js
 
 **触る**
 
 - graph.html
-- js/chart.js
+- js/graph.js
 
 Chart.js読み込み
 
-集計結果をグラフに渡す
+- カテゴリ別円グラフ
+- カテゴリ別棒グラフ
+
+集計結果を表とグラフに反映
 
 **Phase2完成**
 
@@ -347,7 +330,7 @@ Chart.js読み込み
 
 # Phase3：AIカテゴリ自動分類
 
-## Step10：未分類データ抽出
+## Step9：未分類データ抽出
 
 **触る**
 
@@ -362,7 +345,7 @@ categoryが空のものだけ抽出
 
 ---
 
-## Step11：OpenAIへ送信
+## Step10：OpenAIへ送信
 
 **触る**
 
@@ -374,7 +357,7 @@ JSON受信
 
 ---
 
-## Step12：LocalStorage更新
+## Step11：LocalStorage更新
 
 **触る**
 

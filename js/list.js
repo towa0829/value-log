@@ -1,22 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    loadExpenses();
+    renderExpenses();
     setupEditModal();
 });
 
-const categoryMap = {
-    food: '食費',
-    daily_goods: '日用品',
-    transportation: '交通費',
-    fixed_cost: '固定費',
-    entertainment: '娯楽',
-    self_investment: '自己投資',
-    other: 'その他',
-};
-
 
 // 支出データの読み込みと表示
-function loadExpenses() {
-    const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+function renderExpenses() {
+    const expenses = loadExpenses();
     const tableBody = document.getElementById('expenseTableBody');
 
     tableBody.innerHTML = '';
@@ -25,13 +15,14 @@ function loadExpenses() {
     if(expenses.length === 0) {
         const row = tableBody.insertRow();
         const cell = row.insertCell(0);
-        cell.colspan = 7;
+        cell.colSpan = 7;
         cell.textContent = 'データがありません';
         cell.style.textAlign = 'center';
         return;
     }
 
-    expenses.reverse().forEach(function(expense, index) {
+    const reversed = [...expenses].reverse();
+    reversed.forEach(function(expense, index) {
         const row = tableBody.insertRow();
 
         row.insertCell(0).textContent = expense.date;
@@ -59,7 +50,12 @@ function loadExpenses() {
         deleteButton.className = 'deleteButton';
         deleteButton.addEventListener('click',function(event) {
             event.stopPropagation();
-            deleteExpense(expenses.length - 1 - index);
+            if(!confirm('本当に削除しますか?')) {
+                return;
+            }
+            deleteExpenseAt(expenses.length - 1 - index); // storage.js
+            closeEditModal();
+            renderExpenses();
         });
         deleteCell.appendChild(deleteButton);
     });
@@ -86,7 +82,7 @@ function setupEditModal() {
 
 // 編集モーダルを開く
 function openEditModal(index) {
-    const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    const expenses = loadExpenses();
     const expense = expenses[index];
 
     document.getElementById('editIndex').value = index;
@@ -110,10 +106,9 @@ function closeEditModal() {
 
 // 編集した内容を保存
 function saveEdit() {
-    const index = parseInt(document.getElementById('editIndex').value);
-    const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    const index = parseInt(document.getElementById('editIndex').value, 10);
 
-    expenses[index] = {
+    const expense = {
         date: document.getElementById('editDate').value,
         amount: Number(document.getElementById('editAmount').value),
         memo: document.getElementById('editMemo').value,
@@ -121,27 +116,8 @@ function saveEdit() {
         category: document.getElementById('editCategory').value,
     };
 
-    localStorage.setItem('expenses', JSON.stringify(expenses));
+    updateExpense(index, expense);
     closeEditModal();
-    loadExpenses();
+    renderExpenses();
 }
 
-// 後悔コスト計算
-function calculateRegretCost(amount, satisfaction) {
-    return Math.floor(amount * (100 - satisfaction) / 100);
-}
-
-// 削除処理
-function deleteExpense(index) {
-    if(!confirm('本当に削除しますか?')) {
-        return;
-    }
-
-    const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-    expenses.splice(index, 1);
-
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-
-    closeEditModal();
-    loadExpenses();
-}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValueLog - 集計・分析</title>
+    <link rel="stylesheet" href="css/ress.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- header -->
+    <header>
+        <h1>ValueLog</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">支出入力</a></li>
+                <li><a href="list.html">支出一覧</a></li>
+                <li><a href="graph.html">集計・分析</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- main -->
+    <main class="wrapper">
+        <div class="month-selector">
+            <label for="monthSelect">表示月</label>
+            <select id="monthSelect">
+                <option value="all">全期間</option>
+            </select>
+        </div>
+
+        <div>
+            <h2 class="sec-title">月間まとめ</h2>
+            <table id="monthlySummaryTable">
+                <thead>
+                    <tr>
+                    <th>年月</th>
+                    <th>合計金額</th>
+                    <th>満足度平均</th>
+                    <th>後悔コスト</th>
+                </tr>
+                </thead>
+                <tbody></tbody>   
+            </table>
+        </div>
+
+        <div>
+            <h2 class="sec-title">カテゴリ別支出（円グラフ）</h2>
+            <div class="graph-box">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <div>
+            <h2 class="sec-title">カテゴリ別支出（棒グラフ）</h2>
+            <div class="graph-box">
+                <canvas id="categoryBarChart"></canvas>
+            </div>
+        </div>
+    </main>
+    
+
+
+    <script src="js/modules/config.js"></script>
+    <script src="js/modules/calc.js"></script>
+    <script src="js/modules/storage.js"></script>
+    <script src="js/graph.js"></script>
+</body>
+</html>
