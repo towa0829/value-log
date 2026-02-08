@@ -1,4 +1,4 @@
-const categoryMap = {
+export const categoryMap = {
     food: '食費',
     daily_goods: '日用品',
     transportation: '交通費',

@@ -1,3 +1,8 @@
+import { loadExpenses, updateExpense, deleteExpenseAt} from './modules/storage.js';
+import { categoryMap } from './modules/config.js';
+import { calculateRegretCost } from './modules/calc.js';
+
+
 document.addEventListener('DOMContentLoaded', function() {
     renderExpenses();
     setupEditModal();

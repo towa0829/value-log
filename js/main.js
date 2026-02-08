@@ -1,3 +1,6 @@
+import { addExpense } from './modules/storage.js';
+
+
 document.addEventListener('DOMContentLoaded', function() {
 
     setTodayDate();
@@ -37,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
             category: category
         };
         
-        saveExpense(expenseData);
+        addExpense(expenseData);
 
         console.log('保存しました:', expenseData);
 
@@ -51,10 +54,4 @@ function setTodayDate() {
     const dateInput = document.getElementById('date');
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
-}
-
-function saveExpense(data) {
-    const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-    expenses.push(data);
-    localStorage.setItem('expenses', JSON.stringify(expenses));
 }

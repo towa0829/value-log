@@ -143,7 +143,7 @@ category == “” または null
 │
 ├─ index.html
 ├─ list.html
-├─ graph.html
+├─ analysis.html
 │
 ├─ /css
 │   ├─ ress.css
@@ -152,7 +152,7 @@ category == “” または null
 ├─ /js
 │   ├─ main.js
 │   ├─ list.js
-│   ├─ chart.js
+│   ├─ analysis.js
 │   ├─ ai.js
 │   └─ /modules
 │       ├─ config.js
