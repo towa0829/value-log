@@ -1,0 +1,231 @@
+@charset "utf-8";
+
+/* common */
+html {
+    font-size: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #eee;
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+a:hover {
+    color: #777;
+}
+
+img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.sec-title {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.wrapper {
+    width: 90%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 4%;
+}
+
+/* header（共通）*/
+header {
+    background-color: #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 4%;
+}
+
+header nav ul {
+    display: flex;
+    gap: 20px;
+}
+
+/* index.html */
+/* main */
+#input-item {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background-color: #eee;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.expense-form dl {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 20px;
+    column-gap: 25px;
+    align-items: center;
+}
+
+.expense-form dt, .expense-form dd {
+    margin: 0;
+}
+
+.expense-form .full-row {
+    grid-column: 1 / -1;
+}
+
+.expense-form dt {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+.expense-form dd {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.expense-form input,
+.expense-form select,
+.expense-form textarea {
+    width: 100%;
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.expense-form textarea {
+    height: 80px;
+    resize: none;
+}
+
+.expense-form textarea::placeholder {
+    color: #bbb;
+}
+
+.expense-form input[type="range"] {
+    padding: 0;
+}
+
+.expense-form button {
+    width: 40%;
+    margin: 50px auto 10px;
+    display: block;
+    padding: 10px 30px;
+    background-color: #000;
+    color: #eee;
+    border-radius: 6px;
+}
+
+.expense-form button:hover {
+    opacity: 0.8;
+}
+
+/* list.html */
+/* main */
+#list-item {
+    margin-top: 30px;
+    background-color: #eee;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+#expenseTable {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+}
+
+#expenseTable thead {
+    background: #000;
+    color: #fff;
+}
+
+#expenseTable tbody tr {
+    border-bottom: 1px solid #000;
+}
+
+#expenseTable th,
+#expenseTable td {
+    padding: 15px 12px;
+    text-align: left;
+    font-size: 0.95rem;
+    vertical-align: top;
+}
+
+#expenseTable td {
+    text-align: right;
+}
+
+#expenseTable tbody tr:hover {
+    background: #f7f7f7;
+}
+
+#expenseTable td:nth-child(3) {
+    width: 40%;
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-align: left;
+}
+
+.deleteButton {
+    background-color: rgb(255, 0, 0);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.deleteButton:hover {
+    background-color: #a00;
+}
+
+/* 編集モーダル */
+#edit-item {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    max-width: 660px;
+    width: 90%;
+}
+
+.editButtons {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+
+/* モーダル背景（オーバーレイ） */
+#edit-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+

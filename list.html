@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValueLog - 支出一覧</title>
+    <link rel="stylesheet" href="css/ress.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- header -->
+    <header>
+        <h1>ValueLog</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">支出入力</a></li>
+                <li><a href="list.html">支出一覧</a></li>
+                <li><a href="#">集計・分析</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- main -->
+    <main>
+        <div id="list-item" class="wrapper">
+            <h2 class="sec-title">支出一覧</h2>
+            <!-- テーブル -->
+            <table id="expenseTable">
+                <thead>
+                    <tr>
+                        <th>日付</th>
+                        <th>支出額</th>
+                        <th>メモ</th>
+                        <th>満足度</th>
+                        <th>カテゴリ</th>
+                        <th>後悔コスト</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="expenseTableBody">
+
+                </tbody>
+            </table>                                                                    
+        </div>
+
+        <!-- 編集モーダル -->
+        <div id="edit-overlay" style="display: none;"></div>
+        <div id="edit-item" style="display: none;">
+            <h2 class="sec-title">支出を編集</h2>
+            <form id="editForm" class="expense-form">
+                <input type="hidden" id="editIndex">
+
+                <dl>
+                    <div>
+                        <dt><label for="editDate">日付</label></dt>
+                        <dd><input type="date" id="editDate" name="editDate" required></dd>
+                    </div>
+
+                    <div>
+                        <dt><label for="editAmount">支出額</label></dt>
+                        <dd><input type="number" id="editAmount" name="editAmount" min="0" required>円</dd>
+                    </div>
+
+                    <div class="full-row">
+                        <dt><label for="editMemo">メモ</label></dt>
+                        <dd><textarea id="editMemo" name="editMemo" placeholder="商品名や用途などのメモを残しましょう"></textarea></dd>
+                    </div>
+
+                    <div>
+                        <dt><label for="editSatisfaction">満足度</label></dt>
+                        <dd>
+                            <input type="range" id="editSatisfaction" name="editSatisfaction" min="0" max="100" value="100">
+                            <span id="editSatisfactionDisplay">100</span>%
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt><label for="editCategory">カテゴリ</label></dt>
+                        <dd>
+                            <select name="editCategory" id="editCategory">
+                                <option value="">選択してください</option>
+                                <option value="food">食費</option>
+                                <option value="daily_goods">日用品</option>
+                                <option value="transportation">交通費</option>
+                                <option value="fixed_cost">固定費</option>
+                                <option value="entertainment">娯楽</option>
+                                <option value="self_investment">自己投資</option>
+                                <option value="other">その他</option>
+                            </select>
+                        </dd>
+                    </div>
+                </dl>
+                <div class="editButtons">
+                    <button type="button" id="cancelEdit">キャンセル</button>
+                    <button type="submit">保存</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="js/list.js"></script>
+
+</body>
+</html>

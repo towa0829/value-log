@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/ress.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>ValueLog - 支出入力</title>
+</head>
+<body>
+    <!-- header -->
+    <header>
+        <h1>ValueLog</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">支出入力</a></li>
+                <li><a href="list.html">支出一覧</a></li>
+                <li><a href="#">集計・分析</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- main -->
+    <main>
+        <div id="input-item" class="wrapper">
+            <h2 class="sec-title">支出入力</h2>
+            <form id="expenseForm" class="expense-form">
+                <dl>
+                    <div class="detail">
+                        <dt><label for="date">日付</label></dt>
+                        <dd><input type="date" id="date" name="date" required></dd>
+                    </div>
+
+                    <div class="detail">
+                        <dt><label for="amount">支出額</label></dt>
+                        <dd><input type="number" id="amount" name="amount" min="0" required>円</dd>
+                    </div>
+
+                    <div class="detail full-row">
+                        <dt><label for="memo">メモ</label></dt>
+                        <dd><textarea id="memo" name="memo" placeholder="商品名や用途などのメモを残しましょう（100文字以内）" maxlength="100"></textarea></dd>
+                    </div>
+
+                    <div class="detail">
+                        <dt><label for="satisfaction">満足度</label></dt>
+                        <dd>
+                            <input type="range" id="satisfaction" name="satisfaction" min="0" max="100" value="100">
+                            <span id="satisfactionDisplay">100</span>%
+                        </dd>
+                    </div>
+
+                    <div class="detail">
+                        <dt><label for="category">カテゴリ</label></dt>
+                        <dd>
+                            <select name="category" id="category">
+                                <option value="">選択してください</option>
+                                <option value="food">食費</option>
+                                <option value="daily_goods">日用品</option>
+                                <option value="transportation">交通費</option>
+                                <option value="fixed_cost">固定費</option>
+                                <option value="entertainment">娯楽</option>
+                                <option value="self_investment">自己投資</option>
+                                <option value="other">その他</option>
+                            </select>
+                    </dd>
+                    </div>
+                </dl>
+                <button type="submit">保存する</button>
+            </form>
+        </div>
+    </main>
+    
+    <script src="js/main.js"></script>
+</body>
+</html>
