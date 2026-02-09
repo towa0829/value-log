@@ -23,24 +23,33 @@
     <!-- main -->
     <main>
         <div id="list-item" class="wrapper">
-            <h2 class="sec-title">支出一覧</h2>
+            <div class="container">
+                <h2 class="sec-title">支出一覧</h2>
+                <select id="sortMode">
+                    <option value="created_desc">登録の新しい順</option>
+                    <option value="created_asc">登録の古い順</option>
+                    <option value="date_desc">日付の新しい順</option>
+                    <option value="date_asc">日付の古い順</option>
+                </select>
+            </div>
+            
             <!-- テーブル -->
-            <table id="expenseTable">
-                <thead>
-                    <tr>
-                        <th>日付</th>
-                        <th>支出額</th>
-                        <th>メモ</th>
-                        <th>満足度</th>
-                        <th>カテゴリ</th>
-                        <th>後悔コスト</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="expenseTableBody">
-
-                </tbody>
-            </table>                                                                    
+            <div class="table-scroll">
+                <table id="expenseTable">
+                    <thead>
+                        <tr>
+                            <th>日付</th>
+                            <th>支出額</th>
+                            <th>メモ</th>
+                            <th>満足度</th>
+                            <th>カテゴリ</th>
+                            <th>後悔コスト</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenseTableBody"></tbody>
+                </table> 
+            </div>                                                                   
         </div>
 
         <!-- 編集モーダル -->

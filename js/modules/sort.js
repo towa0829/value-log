@@ -1,5 +1,5 @@
 // 支出データの並び替え
-export function sortExpenses(expesnses, mode) {
+export function sortExpenses(expenses, mode) {
     const copied = [...expenses];
 
     switch (mode) {
@@ -19,11 +19,6 @@ export function sortExpenses(expesnses, mode) {
             return copied;
     }
 }
-
-
-
-
-
 
 
 // その他を必ず最後に

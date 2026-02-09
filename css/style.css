@@ -57,6 +57,13 @@ header nav ul {
     gap: 20px;
 }
 
+/* テーブル */
+.table-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+
 /* index.html */
 /* main */
 #input-item {
@@ -145,7 +152,34 @@ header nav ul {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     border-radius: 8px;
     padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+    height: calc((100vh - 100px) *0.95);;
 }
+
+#list-item .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 0;
+}
+
+.table-scroll thead {
+    position: sticky;   /* ヘッダーを固定する場合 */
+    top: 0;
+    z-index: 1;
+}
+
+#list-item .container #sortMode {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #999;
+    background-color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
 
 #expenseTable {
     width: 100%;
@@ -179,7 +213,7 @@ header nav ul {
 }
 
 #expenseTable td:nth-child(3) {
-    width: 30%;
+    width: 25%;
     white-space: pre-wrap;
     word-break: break-word;
     text-align: left;
@@ -235,7 +269,7 @@ header nav ul {
 /* analysis.html */
 
 .analysis-main {
-    height: calc((100vh - 100px) *0.975);
+    height: calc((100vh - 100px) *0.95);
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
@@ -301,12 +335,6 @@ header nav ul {
     font-size: 0.8rem;
     cursor: pointer;
     text-align: center;
-}
-
-.report .table-container .table-scroll {
-    flex: 1;
-    min-height: 0;
-    overflow: auto;
 }
 
 #monthlySummaryTable {

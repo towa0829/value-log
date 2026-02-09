@@ -1,12 +1,34 @@
 import { loadExpenses, updateExpense, deleteExpenseAt} from './modules/storage.js';
 import { CATEGORY_MAP } from './modules/config.js';
 import { calculateRegretCost } from './modules/calc.js';
+import { sortExpenses } from './modules/sort.js';
+
+let currentSortMode = 'created_desc';
 
 
 document.addEventListener('DOMContentLoaded', function() {
+    setupSortSelect();
     renderExpenses();
     setupEditModal();
 });
+
+function setupSortSelect() {
+    const sortSelect = document.getElementById('sortMode');
+    if(!sortSelect) return;
+
+    sortSelect.value = currentSortMode;
+    sortSelect.addEventListener('change', function() {
+        currentSortMode = this.value;
+        renderExpenses();
+    });
+}
+
+function prepareExpensesForView(expenses, sortMode) {
+    return sortExpenses(
+        expenses.map((e, i) => ({ ...e, originalIndex: i})),
+        sortMode
+    );
+}
 
 
 // 支出データの読み込みと表示
@@ -26,8 +48,8 @@ function renderExpenses() {
         return;
     }
 
-    const reversed = [...expenses].reverse();
-    reversed.forEach(function(expense, index) {
+    const viewExpenses = prepareExpensesForView(expenses, currentSortMode);
+    viewExpenses.forEach(function(expense) {
         const row = tableBody.insertRow();
 
         row.insertCell(0).textContent = expense.date;
@@ -45,7 +67,7 @@ function renderExpenses() {
         // 行をクリック
         row.style.cursor = 'pointer';
         row.addEventListener('click',function() {
-            openEditModal(expenses.length - 1 - index);
+            openEditModal(expense.originalIndex);
         });
 
 
@@ -58,7 +80,7 @@ function renderExpenses() {
             if(!confirm('本当に削除しますか?')) {
                 return;
             }
-            deleteExpenseAt(expenses.length - 1 - index); // storage.js
+            deleteExpenseAt(expense.originalIndex); // storage.js
             closeEditModal();
             renderExpenses();
         });
