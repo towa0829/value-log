@@ -212,6 +212,10 @@ header nav ul {
     background: #f7f7f7;
 }
 
+#expenseTable th:nth-child(3) {
+    text-align: center;
+}
+
 #expenseTable td:nth-child(3) {
     width: 25%;
     white-space: pre-wrap;
