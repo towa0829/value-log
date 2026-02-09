@@ -22,36 +22,51 @@
     </header>
 
     <!-- main -->
-    <main class="wrapper">
-        <div class="summary-toggle">
-            <button id="btnMonthly" class="active">月別まとめ</button>
-            <button id="btnYearly">年別まとめ</button>
+    <main class="wrapper analysis-main">
+        <div class="report">
+            <div class="header-report">
+                <h2 class="sec-title">レポート</h2>
+                <div class="summary-toggle">
+                    <button id="btnMonthly" class="active">月次</button>
+                    <button id="btnYearly">年次</button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <div id="yearSelector"></div>
+                <div class="table-scroll">
+                    <table id="monthlySummaryTable">
+                        <thead>
+                            <tr>
+                            <th>期間</th>
+                            <th>合計金額</th>
+                            <th>満足度</th>
+                            <th>後悔コスト</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>   
+                    </table>
+                </div>
+            </div>
         </div>
 
-        <div id="yearSelector" style="display: none; margin-bottom: 1rem"></div>
-
-        <div>
-            <table id="monthlySummaryTable">
-                <thead>
-                    <tr>
-                    <th>期間</th>
-                    <th>合計金額</th>
-                    <th>満足度平均</th>
-                    <th>後悔コスト</th>
-                </tr>
-                </thead>
-                <tbody></tbody>   
-            </table>
+        <div class="analysis-ai">
+            <h2 class="sec-title">AI分析</h2>
+            <p>
+                2026年5月の支出データをもとに、AIが分析を行います。
+                <br>
+                今月は支出が増えている一方で，満足度はやや下がっています．金額に対して得られている満足感が小さくなっている可能性があります．特に後悔コストの割合が高く，満足度の低い支出が増えている点が気になります．満足度の高いカテゴリへの支出を意識すると，より納得感のあるお金の使い方に近づけそうです．
+            </p>
         </div>
 
-        <div>
+        <div class="pie-chart">
             <h2 class="sec-title">カテゴリ別支出（円グラフ）</h2>
             <div class="graph-box">
                 <canvas id="categoryChart"></canvas>
             </div>
         </div>
 
-        <div>
+        <div class="bar-chart">
             <h2 class="sec-title">カテゴリ別支出（棒グラフ）</h2>
             <div class="graph-box">
                 <canvas id="categoryBarChart"></canvas>

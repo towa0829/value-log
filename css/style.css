@@ -31,24 +31,25 @@ img {
 }
 
 .sec-title {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     margin-bottom: 20px;
 }
 
 .wrapper {
-    width: 90%;
-    max-width: 960px;
+    width: 92.5%;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 4%;
 }
 
 /* header（共通）*/
 header {
+    height: 80px;
     background-color: #eee;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 4%;
+    padding: 0 4%;
 }
 
 header nav ul {
@@ -59,6 +60,7 @@ header nav ul {
 /* index.html */
 /* main */
 #input-item {
+    max-width: 900px;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -138,6 +140,7 @@ header nav ul {
 /* main */
 #list-item {
     margin-top: 30px;
+    margin-bottom: 30px;
     background-color: #eee;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     border-radius: 8px;
@@ -161,10 +164,10 @@ header nav ul {
 
 #expenseTable th,
 #expenseTable td {
-    padding: 15px 12px;
-    text-align: left;
+    padding: 12px 8px;
     font-size: 0.95rem;
-    vertical-align: top;
+    vertical-align: middle;
+    text-align: right;
 }
 
 #expenseTable td {
@@ -176,7 +179,7 @@ header nav ul {
 }
 
 #expenseTable td:nth-child(3) {
-    width: 40%;
+    width: 30%;
     white-space: pre-wrap;
     word-break: break-word;
     text-align: left;
@@ -229,3 +232,150 @@ header nav ul {
 }
 
 
+/* analysis.html */
+
+.analysis-main {
+    height: calc((100vh - 100px) *0.975);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+}
+
+.analysis-main>div {
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+
+/* レポート */
+.header-report {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-report .summary-toggle {
+    display: flex;
+    gap: 10px;
+}
+
+.header-report .summary-toggle button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.report {
+    background: #e9f0f7;
+}
+
+.report .table-container {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+}
+
+.report .table-container #yearSelector {
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+}
+
+.report .table-container #yearSelector select {
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid #999;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+.report .table-container .table-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+
+#monthlySummaryTable {
+    width: 98%;
+    border-collapse: collapse;
+    /* margin-right: 20px; */
+}
+
+#monthlySummaryTable thead {
+    background: #000;
+    color: #fff;
+}
+
+#monthlySummaryTable tbody tr {
+    border-bottom: 1px solid #000;
+}
+
+#monthlySummaryTable th,
+#monthlySummaryTable td {
+    padding: 7px 7px;
+    text-align: left;
+    font-size: 0.95rem;
+    text-align: right;
+    vertical-align: top;
+}
+
+#monthlySummaryTable td {
+    text-align: right;
+}
+
+#monthlySummaryTable tbody tr:hover {
+    background: #f7f7f7;
+}
+
+.analysis-ai {
+    background: #f1eafe;
+}
+
+.pie-chart {
+    background: #e8f6ee;
+}
+
+.pie-chart .graph-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.pie-chart .graph-box canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.bar-chart {
+    background: #fff1e6;
+}
+
+.bar-chart .graph-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.bar-chart .graph-box canvas {
+    max-width: 100%;
+    max-height: 100%;
+}

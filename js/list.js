@@ -1,5 +1,5 @@
 import { loadExpenses, updateExpense, deleteExpenseAt} from './modules/storage.js';
-import { categoryMap } from './modules/config.js';
+import { CATEGORY_MAP } from './modules/config.js';
 import { calculateRegretCost } from './modules/calc.js';
 
 
@@ -34,7 +34,7 @@ function renderExpenses() {
         row.insertCell(1).textContent = expense.amount + '円';
         row.insertCell(2).textContent = expense.memo || '-';
         row.insertCell(3).textContent = expense.satisfaction + '%';
-        row.insertCell(4).textContent = categoryMap[expense.category] || '未分類';
+        row.insertCell(4).textContent = CATEGORY_MAP[expense.category] || '未分類';
 
         const regretCost = calculateRegretCost(expense.amount, expense.satisfaction);
         row.insertCell(5).textContent = regretCost + '円';

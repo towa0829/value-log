@@ -1,13 +1,15 @@
 import { CATEGORY_MAP, CHART_COLORS } from './modules/config.js';
 import { loadExpenses } from './modules/storage.js';
-import { calculateRegretCost } from './modules/calc.js';
-
+import { calculateRegretCost, toPercentMap } from './modules/calc.js';
+import { sortCategoryMap } from './modules/sort.js';
 
 const btnMonthly = document.getElementById('btnMonthly');
 const btnYearly = document.getElementById('btnYearly');
 
 const summaryTbody = document.querySelector('#monthlySummaryTable tbody');
 const yearSelector = document.getElementById('yearSelector');
+const pieChartTitle = document.querySelector('.pie-chart .sec-title');
+const barChartTitle = document.querySelector('.bar-chart .sec-title');
 let categoryChart, categoryBarChart;
 
 // 月別集計
@@ -35,12 +37,12 @@ function renderSummaryTable(expenses, mode = 'monthly') {
     const keys = Object.keys(grouped).sort().reverse();
     if (keys.length === 0) {
         summaryTbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">データがありません</td></tr>';
-        yearSelector.style.display = 'none';
+        yearSelector.innerHTML = '';
         return;
     }
 
     if (mode === 'yearly') {
-        yearSelector.style.display = 'none';
+        yearSelector.innerHTML = '';
         keys.forEach((key) => {
             const data = grouped[key];
             const avgSatisfaction = Math.round(data.satisfactionSum / data.count);
@@ -57,8 +59,8 @@ function renderSummaryTable(expenses, mode = 'monthly') {
             row.style.cursor = 'pointer';
             row.onclick = () => {
                 const filtered = filterByPeriod(expenses, key, mode);
-                renderCategoryChart(filtered);
-                renderCategoryBarChart(filtered);
+                renderCategoryChart(filtered, key);
+                renderCategoryBarChart(filtered, key);
             }
         });
         return;
@@ -74,23 +76,18 @@ function renderSummaryTable(expenses, mode = 'monthly') {
     const years = Object.keys(yearMap).sort().reverse();
     const latestYear = years[0];
 
-    yearSelector.style.display = 'block';
-    yearSelector.innerHTML = years
-        .map((y) => `<button type="button" class="year-select ${y === latestYear ? 'active' : ''}" data-year="${y}">${y}年</button>`)
-        .join(' ');
+    yearSelector.innerHTML = `
+        <select id="yearSelect">
+            ${years.map((y) => `<option value="${y}" ${y === latestYear ? 'selected' : ''}>${y}</option>`).join('')}
+        </select>
+    `;
 
-    yearSelector.onclick = (e) => {
-        const yearBtn = e.target.closest('.year-select');
-        if (yearBtn) {
-            const year = yearBtn.dataset.year;
-            yearSelector.querySelectorAll('.year-select').forEach((b) => b.classList.remove('active'));
-            yearBtn.classList.add('active');
-
-            summaryTbody.querySelectorAll('tr.month-row').forEach((r) => {
-                r.style.display = r.dataset.year === year ? '' : 'none';
-            });
-         }
-    };
+    document.getElementById('yearSelect').addEventListener('change', (e) => {
+        const year = e.target.value;
+        summaryTbody.querySelectorAll('tr.month-row').forEach((r) => {
+            r.style.display = r.dataset.year === year ? '' : 'none';
+        });
+    });
 
     years.forEach((year) => {
         yearMap[year].forEach((key) => {
@@ -111,8 +108,9 @@ function renderSummaryTable(expenses, mode = 'monthly') {
             row.style.cursor = 'pointer';
             row.onclick = () => {
                 const filtered = filterByPeriod(expenses, key, mode);
-                renderCategoryChart(filtered);
-                renderCategoryBarChart(filtered);
+                const month = parseInt(key.slice(5));
+                renderCategoryChart(filtered, `${month}月`);
+                renderCategoryBarChart(filtered, `${month}月`);
             }
             if (year !== latestYear) row.style.display = 'none';
         });
@@ -137,10 +135,15 @@ function groupByCategory(expenses) {
 }
 
 // カテゴリ別円グラフ
-function renderCategoryChart(expenses) {
-    const byCat = groupByCategory(expenses);
-    const labels = Object.keys(byCat);
-    const data = labels.map((k) => byCat[k]);
+function renderCategoryChart(expenses, periodLabel = '全期間') {
+    const byCat = groupByCategory(expenses);   // 金額
+    const sorted = sortCategoryMap(byCat);    // 並び替え（表示用）
+    const percent = toPercentMap(sorted);     // 表示用に変換
+    const labels = Object.keys(percent);
+    const data = labels.map(k => percent[k]);
+
+
+    pieChartTitle.textContent = `カテゴリ別支出割合（円グラフ）- ${periodLabel}`;
 
     if(categoryChart) {
         categoryChart.destroy();
@@ -157,18 +160,32 @@ function renderCategoryChart(expenses) {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
-                legend: { position: "bottom"}
+                legend: { 
+                    position: "right",
+                    align: "center"
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => {
+                        return `${ctx.label}: ${ctx.raw.toFixed(1)}%`;
+                        }
+                    }
+                }
             }
         }
     });
 }
 
 // カテゴリ別棒グラフ
-function renderCategoryBarChart(expenses) {
+function renderCategoryBarChart(expenses, periodLabel = '全期間') {
     const byCat = groupByCategory(expenses);
-    const labels = Object.keys(byCat);
-    const data = labels.map((k) => byCat[k]);
+    const sorted = sortCategoryMap(byCat);
+    const labels = Object.keys(sorted);
+    const data = labels.map((k) => sorted[k]);
+
+    barChartTitle.textContent = `カテゴリ別支出（棒グラフ）- ${periodLabel}`;
 
     if(categoryBarChart) {
         categoryBarChart.destroy();
@@ -179,7 +196,6 @@ function renderCategoryBarChart(expenses) {
         data: {
             labels,
             datasets: [{
-                label: '支出金額（円）',
                 data,
                 backgroundColor: CHART_COLORS
             }]
@@ -187,7 +203,16 @@ function renderCategoryBarChart(expenses) {
         options: {
             responsive: true,
             plugins: {
-                legend: { display: false }
+                legend: { 
+                    display: false 
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => {
+                        return `${ctx.label}: ${ctx.raw}円`;
+                        }
+                    }
+                }
             },
             scales: {
                 y: {
@@ -213,8 +238,9 @@ function renderLatestPeriodCharts(expenses, mode = 'monthly') {
     const latestKey = getLatestPeriodKey(expenses, mode);
     if (!latestKey) return;
     const filtered = filterByPeriod(expenses, latestKey, mode);
-    renderCategoryChart(filtered);
-    renderCategoryBarChart(filtered);
+    const label = mode === 'yearly' ? latestKey : `${parseInt(latestKey.slice(5))}月`;
+    renderCategoryChart(filtered, label);
+    renderCategoryBarChart(filtered, label);
 }
 
 function handlePeriodChange(mode) {
