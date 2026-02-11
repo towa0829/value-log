@@ -1,35 +1,22 @@
 import { CATEGORY_MAP, CHART_COLORS } from './modules/config.js';
 import { loadExpenses } from './modules/storage.js';
-import { calculateRegretCost, toPercentMap } from './modules/calc.js';
+import { groupByPeriod, toPercentMap, generateAnalysisData } from './modules/calc.js';
 import { sortCategoryMap } from './modules/sort.js';
+import { requestAiAnalysis } from './modules/ai.js';
 
 const btnMonthly = document.getElementById('btnMonthly');
 const btnYearly = document.getElementById('btnYearly');
-
 const summaryTbody = document.querySelector('#monthlySummaryTable tbody');
 const yearSelector = document.getElementById('yearSelector');
+
+const btnAiAnalysis = document.getElementById('ai-analysis');
+
 const pieChartTitle = document.querySelector('.pie-chart .sec-title');
 const barChartTitle = document.querySelector('.bar-chart .sec-title');
 let categoryChart, categoryBarChart;
 
-// 月別集計
-function groupByPeriod(expenses, mode='monthly') {
-    const map = {};
-    expenses.forEach((e) => {
-        const period = mode === 'yearly' ? e.date.slice(0, 4) : e.date.slice(0, 7);
-        if (!map[period]) {
-            map[period] = { total: 0, regret: 0, satisfactionSum: 0, count: 0};
-        }
-        const regret = calculateRegretCost(e.amount, e.satisfaction);
-        map[period].total += e.amount;
-        map[period].regret += regret;
-        map[period].satisfactionSum += e.satisfaction;
-        map[period].count += 1;
-    });
-    return map;
-}
 
-// 月別集計の表示
+// 月/年別集計の表示
 function renderSummaryTable(expenses, mode = 'monthly') {
     const grouped = groupByPeriod(expenses, mode);
     summaryTbody.innerHTML = '';
@@ -58,6 +45,8 @@ function renderSummaryTable(expenses, mode = 'monthly') {
 
             row.style.cursor = 'pointer';
             row.onclick = () => {
+                document.querySelectorAll('.period-row').forEach(r => r.classList.remove('selected'));
+                row.classList.add('selected');
                 const filtered = filterByPeriod(expenses, key, mode);
                 renderCategoryChart(filtered, key);
                 renderCategoryBarChart(filtered, key);
@@ -107,6 +96,8 @@ function renderSummaryTable(expenses, mode = 'monthly') {
 
             row.style.cursor = 'pointer';
             row.onclick = () => {
+                document.querySelectorAll('.month-row').forEach(r => r.classList.remove('selected'));
+                row.classList.add('selected');
                 const filtered = filterByPeriod(expenses, key, mode);
                 const month = parseInt(key.slice(5));
                 renderCategoryChart(filtered, `${month}月`);
@@ -123,6 +114,46 @@ function filterByPeriod(expenses, periodKey, mode = 'monthly') {
         return key === periodKey;
     })
 }
+
+// AI分析
+btnAiAnalysis.addEventListener('click', async () => {
+    try {
+        // 現在選択されている期間を取得
+        const currentMode = btnMonthly.classList.contains('active') ? 'monthly' : 'yearly';
+        const expenses = loadExpenses();
+
+        // 最新期間または選択中の期間を特定
+        const activePeriodRow = document.querySelector('.period-row.selected, .month-row.selected');
+        let period;
+
+        if (activePeriodRow) {
+            period = activePeriodRow.dataset.period;
+        } else {
+            period = getLatestPeriodKey(expenses, currentMode);
+        }
+
+        if (!period) {
+            alert('分析対象の期間が見つかりません．');
+            return;
+        }
+
+        // AI分析用データ生成
+        const analysisData = generateAnalysisData(period, expenses);
+
+        // ローディング表示
+        const resultArea = document.getElementById('ai-analysis-result');
+        resultArea.textContent = '分析中...';
+
+        // AI APIへリクエスト
+        const result = await requestAiAnalysis(analysisData);
+
+        // 結果を表示
+        resultArea.textContent = result.analysis;
+    }catch (error) {
+        console.log('AI分析エラー:', error);
+        document.getElementById('ai-analysis-result').textContent = 'エラーが発生しました: ' + error.message;
+    }
+});
 
 // カテゴリ別集計
 function groupByCategory(expenses) {

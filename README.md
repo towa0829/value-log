@@ -40,7 +40,7 @@
 | カテゴリ | 既存カテゴリから選択 |
 | 保存 | ローカルストレージへ保存 |
 
-使用カテゴリ：食費，日用品，衣服，交通費，娯楽，自己投資，その他
+使用カテゴリ：食費，日用品，交通費，固定費，娯楽，自己投資，その他
 
 ## AIカテゴリ自動分類機能
 
@@ -96,13 +96,16 @@ category == “” または null
 | 満足度 | 編集可能 |
 | 後悔コスト |  |
 | 削除ボタン | あり |
+| ソート機能 | 登録の新しい順/古い順、日付の新しい順/古い順 |
 
 ## 集計・分析機能
 
 | 項目 | 備考 |
 | --- | --- |
 | 月ごとの集計・分析 | 合計金額 / 後悔コスト / 満足度平均 |
+| 年次集計・分析 | 月次/年次切り替え可能 |
 | グラフ表示 | カテゴリ別（円グラフ / 棒グラフ） |
+| 期間フィルタ | クリックした期間のグラフを表示 |
 
 # 画面設計
 
@@ -124,6 +127,58 @@ category == “” または null
 	]
 ```
 
+## AI分析機能
+
+**目的**
+OpenAI APIを使用して支出データを分析し、ユーザーの支出傾向や改善点をテキストで提示する。
+
+**対象データ**
+特定期間（月次または年次）の支出データ全体
+
+**処理フロー**
+1. 分析対象期間の支出データを集計
+2. 以下の情報をOpenAI APIへ送信
+   - 合計金額
+   - 後悔コスト
+   - 満足度平均
+   - カテゴリ別支出割合
+   - カテゴリ別満足度平均
+   - 前月比（増減傾向）
+3. AIからの分析結果（テキスト）を取得
+4. 分析結果を画面に表示
+
+**AIに送信するJSON形式（リクエスト）**
+```jsx
+{
+  "period": "string",  // YYYY-MM または YYYY
+  "totalAmount": "number",
+  "regretCost": "number",
+  "averageSatisfaction": "number",
+  "categoryBreakdown": [
+    {
+      "category": "string",
+      "amount": "number",
+      "percentage": "number",
+      "averageSatisfaction": "number"
+    }
+  ],
+  "previousPeriodComparison": {
+    "amountChange": "number",  // 前月比の増減額
+    "satisfactionChange": "number"  // 前月比の満足度変化
+  }
+}
+```
+
+**AIから受け取るJSON形式（レスポンス）**
+```jsx
+{
+  "analysis": "string"  // 分析結果のテキスト
+}
+```
+
+**表示場所**
+analysis.html の「AI分析」セクション
+
 ## OpenAI APIスキーマ
 
 # 使用技術
@@ -144,6 +199,7 @@ category == “” または null
 ├─ index.html
 ├─ list.html
 ├─ analysis.html
+├─ server.js
 │
 ├─ /css
 │   ├─ ress.css
@@ -153,11 +209,13 @@ category == “” または null
 │   ├─ main.js
 │   ├─ list.js
 │   ├─ analysis.js
-│   ├─ ai.js
+│   │
 │   └─ /modules
 │       ├─ config.js
 │       ├─ calc.js
-│       └─ storage.js
+│       ├─ storage.js
+│       ├─ sort.js
+│       └─ ai.js
 │
 ├─ /assets
 │   └─ images, icons
@@ -174,7 +232,7 @@ category == “” または null
 | --- | --- | --- |
 | 1 | LocalStorage 家計簿（CRUD） | HTML / CSS / JS |
 | 2 | 分析・グラフ | JS / Chart.js |
-| 3 | AIカテゴリ自動分類 | OpenAI API / fetch |
+| 3 | AIカテゴリ自動分類 AI分析 | OpenAI API / fetch |
 | 4 | Next.js化＋DB保存 | React / Next / MySQL |
 
 # Phase1：動く家計簿を完成（CRUD）
@@ -258,15 +316,13 @@ main.js から呼び出して console.log
 
 - list.html
 - js/list.js
-- js/storage.js
+- js/modules/storage.js
+- js/modules/sort.js
 
 list.html 下部
 
 ```html
-<script src="js/modules/config.js"></script>
-<script src="js/modules/calc.js"></script>
-<script src="js/modules/storage.js"></script>
-<script src="js/list.js"></script>
+<script type="module" src="js/list.js"></script>
 ```
 
 list.js
@@ -275,6 +331,7 @@ list.js
 - ループ表示
 - 行クリックで編集
 - 削除ボタンで deleteExpenseAt
+- ソート機能（登録順/日付順）を実装
 
 **Phase1完成**
 
@@ -301,26 +358,32 @@ list.js
 
 **触る**
 
-- js/graph.js
+- js/analysis.js
+- js/modules/calc.js
+- js/modules/sort.js
 
 作る関数
 
 - 月ごとの集計（合計 / 後悔コスト / 満足度平均）
+- 年次集計
 - カテゴリ別集計（合計 / 割合）
+- カテゴリ並び替え（その他を最後に）
 
 ---
 
-## Step8：graph.html と Chart.js
+## Step8：analysis.html と Chart.js
 
 **触る**
 
-- graph.html
-- js/graph.js
+- analysis.html
+- js/analysis.js
 
 Chart.js読み込み
 
-- カテゴリ別円グラフ
+- カテゴリ別円グラフ（ドーナツチャート）
 - カテゴリ別棒グラフ
+- 月次/年次切り替えボタン
+- 期間クリックでグラフ更新
 
 集計結果を表とグラフに反映
 
@@ -328,7 +391,7 @@ Chart.js読み込み
 
 ---
 
-# Phase3：AIカテゴリ自動分類
+# Phase3：AIカテゴリ自動分類 AI分析
 
 ## Step9：未分類データ抽出
 
@@ -367,6 +430,23 @@ JSON受信
 返却された id と category をもとに
 
 既存データを書き換え
+
+---
+
+## Step12：AI分析機能の実装
+
+**触る**
+
+- js/ai.js
+- js/analysis.js
+
+実装内容
+
+- 分析対象期間の支出データを集計
+- カテゴリ別満足度平均を計算
+- 前月比データを計算
+- JSON形式でOpenAI APIへ送信
+- 分析結果をanalysis.htmlに表示
 
 **Phase3完成**
 
