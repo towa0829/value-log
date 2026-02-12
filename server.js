@@ -41,6 +41,8 @@ app.post('/api/analyze', async (req, res) => {
         - 満足度変化: ${analysisData.previousPeriodComparison.satisfactionChange > 0 ? '+' : ''}${analysisData.previousPeriodComparison.satisfactionChange}%
 
         簡潔に3〜5行程度で分析結果を提示してください。
+        重要なことは<storong>タグを使って強調してください．
+        例： <strong>支出が増加傾向にあります</strong>
         `;
 
         const completion = await openai.chat.completions.create({

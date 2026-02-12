@@ -42,49 +42,10 @@
 
 使用カテゴリ：食費，日用品，交通費，固定費，娯楽，自己投資，その他
 
-## AIカテゴリ自動分類機能
+## 支出一覧表示機能
 
-**目的**
-カテゴリ設定の支出データをまとめてAIに送信し，一括でカテゴリを付与する．
-支出登録時にはAPIを使用しない．
+| 項目 | 備考 |
 
-**対象データ**
-LocalStorageに保存されている支出データのうち，以下の状態を満たすもの
-
-```jsx
-category == “” または null
-```
-
-**処理フロー**
-1．LocalStorageから全支出データを取得
-2．カテゴリ未設定データのみ抽出
-3．JSON配列としてOpenAI APIへ送信
-4．各データに対応するカテゴリ一覧を取得
-5．該当データにカテゴリを反映
-6．LocalStorageを更新
-
-**AIに送信するJSON形式（リクエスト）**
-
-```jsx
-[
-	{
-		"id": "string",
-		"memo": "string"
-	}
-]
-
-```
-
-**AIから受け取るJSON形式（レスポンス）**
-
-```jsx
-[
-	{
-		"id": "string",
-		"category": "string" //既存カテゴリから選択させる
-	}
-]
-```
 
 ## 支出一覧表示機能
 
@@ -190,7 +151,7 @@ analysis.html の「AI分析」セクション
 | JavaScript | ロジック処理 |
 | LocalStorage | データ保存 |
 | Chart.js | グラフ描画 |
-| OpenAI API | カテゴリ自動分類 |
+| OpenAI API | AI分析 |
 | fetchAPI | JSON送信処理 |
 
 # ファイル構成
@@ -232,7 +193,7 @@ analysis.html の「AI分析」セクション
 | --- | --- | --- |
 | 1 | LocalStorage 家計簿（CRUD） | HTML / CSS / JS |
 | 2 | 分析・グラフ | JS / Chart.js |
-| 3 | AIカテゴリ自動分類 AI分析 | OpenAI API / fetch |
+| 3 | AI分析 | OpenAI API / fetch |
 | 4 | Next.js化＋DB保存 | React / Next / MySQL |
 
 # Phase1：動く家計簿を完成（CRUD）
@@ -391,49 +352,9 @@ Chart.js読み込み
 
 ---
 
-# Phase3：AIカテゴリ自動分類 AI分析
+# Phase3：AI分析
 
-## Step9：未分類データ抽出
-
-**触る**
-
-- js/ai.js
-- js/storage.js
-
-getAllData()
-
-categoryが空のものだけ抽出
-
-指定JSONに整形
-
----
-
-## Step10：OpenAIへ送信
-
-**触る**
-
-- js/ai.js
-
-fetchでJSON送信
-
-JSON受信
-
----
-
-## Step11：LocalStorage更新
-
-**触る**
-
-- js/ai.js
-- js/storage.js
-
-返却された id と category をもとに
-
-既存データを書き換え
-
----
-
-## Step12：AI分析機能の実装
+## Step9：AI分析機能の実装
 
 **触る**
 

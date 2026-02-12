@@ -178,18 +178,25 @@ header nav ul {
     background-color: #fff;
     font-size: 0.9rem;
     cursor: pointer;
+    text-align: center;
 }
 
 
 #expenseTable {
     width: 100%;
     border-collapse: collapse;
-    overflow: hidden;
 }
 
 #expenseTable thead {
     background: #000;
     color: #fff;
+}
+
+#expenseTable thead th {
+    position: sticky;
+    top: 0;
+    background: #000;
+    z-index: 1;
 }
 
 #expenseTable tbody tr {
@@ -373,10 +380,43 @@ header nav ul {
     background: #f7f7f7;
 }
 
+
+/* AI分析 */
 .analysis-ai {
     background: #f1eafe;
 }
 
+.analysis-ai .sec-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.analysis-ai #ai-analysis {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.analysis-ai .ai-analysis-result {
+    flex: 1;
+    margin-top: 20px;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: auto;
+    min-height: 0;
+}
+
+
+
+/* グラフ */
 .pie-chart {
     background: #e8f6ee;
 }
